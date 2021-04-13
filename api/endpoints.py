@@ -25,7 +25,6 @@ class AppointmentConfirmation(Resource):
         try:
             # retrieving args from the query url string from the request object
             args = request.args 
-            print(args)
             # validate the args, make sure all required params are passed in from the request args
             if 'key' not in args or 'number' not in args or 'message' not in args:
                 return { 'success':'false', 'message':'Missing params key, number, or message' }

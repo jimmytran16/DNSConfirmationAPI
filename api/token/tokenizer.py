@@ -27,8 +27,6 @@ def generate_JWT():
 # authenticate Json Web Token
 def authenticate_JWT(token,signature):
     try: 
-        jwt.decode(token, signature , algorithms=[HASHING_ALG])
-        return True 
+        jwt.decode(token, signature , algorithms=[HASHING_ALG]) 
     except Exception as e:
-        print(e)
-        return False
+        raise Exception(str(e))
