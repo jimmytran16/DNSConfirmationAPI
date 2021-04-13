@@ -2,6 +2,7 @@ from flask_restful import Resource, request
 from . import app, api
 
 from .twilio.send import send_comfirmation_text_msg_to_reciever
+from .token.tokenizer import generate_JWT
 
 # Main endpoint
 class Main(Resource):
@@ -11,8 +12,12 @@ class Main(Resource):
 # Token Generator endpoint - generates JWT to the Designer Web App, to authorize use of AppointmentConfirmation 
 class GenerateToken(Resource):
     def get(self):
-        jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-        return { 'success':'true', 'accessToken': jwt }
+        try:
+            token = generate_JWT().decode("utf-8") 
+            return { 'success':'true', 'accessToken': token }
+        except Exception as e:
+            print('generate exception ',e)
+            return { 'success':'false', 'accessToken': 'N/A' }
 
 # Appointment Confirmation endpoint
 class AppointmentConfirmation(Resource):
