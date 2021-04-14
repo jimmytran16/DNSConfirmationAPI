@@ -11,6 +11,8 @@ load_dotenv()
 HASHING_ALG = os.getenv('HASH_ALG')
 SIGNATURE = os.getenv('SIGNATURE')
 
+print(HASHING_ALG)
+
 # generate a random token
 def generate_random_token():
     return uuid4().hex
@@ -22,6 +24,7 @@ def generate_JWT():
     RANDOM_TOKEN =  generate_random_token()
     
     token = jwt.encode({"random": RANDOM_TOKEN , "exp": EXPIRATION_TIMESTAMP}, SIGNATURE , algorithm=HASHING_ALG)
+    print('TOKEN GENERATED- ',token)
     return token
 
 # authenticate Json Web Token
