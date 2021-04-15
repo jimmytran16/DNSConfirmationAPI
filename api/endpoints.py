@@ -13,11 +13,13 @@ class Main(Resource):
 class GenerateToken(Resource):
     def get(self):
         try:
-            token = generate_JWT().decode("utf-8") 
+            # retrieve api token from the client
+            apiKey = request.args['apiKey']
+            token = generate_JWT(apiKey).decode("utf-8") 
             return { 'success':'true', 'accessToken': token }
         except Exception as e:
             print('generate exception ',e)
-            return { 'success':'false', 'accessToken': 'N/A' }
+            return { 'success':'false', 'accessToken': 'error_generating_token' + str(e).replace(' ','_') }
 
 # Appointment Confirmation endpoint
 class AppointmentConfirmation(Resource):

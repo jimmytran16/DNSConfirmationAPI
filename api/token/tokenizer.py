@@ -7,25 +7,25 @@ import datetime
 from dotenv import load_dotenv
 load_dotenv()
 
-# Get Hashing Algorithm, and Signuture from the enviroment variables
+# Get Hashing Algorithm, and Signuture from the enviroment variables, and expiration time in hours
 HASHING_ALG = os.getenv('HASH_ALG')
 SIGNATURE = os.getenv('SIGNATURE')
-
-print(HASHING_ALG)
+EXPIRATION_TIME_HOURS = int(os.getenv('EXPIRATION_TIME'))
+API_KEY=os.getenv('API_KEY')
 
 # generate a random token
 def generate_random_token():
     return uuid4().hex
 
 # generaete a Json Web Token 
-def generate_JWT():
-    EXPIRATION_TIME_MINUTES = 1
-    EXPIRATION_TIMESTAMP = datetime.datetime.utcnow() + datetime.timedelta(minutes=EXPIRATION_TIME_MINUTES)
-    RANDOM_TOKEN =  generate_random_token()
-    
-    token = jwt.encode({"random": RANDOM_TOKEN , "exp": EXPIRATION_TIMESTAMP}, SIGNATURE , algorithm=HASHING_ALG)
-    print('TOKEN GENERATED- ',token)
-    return token
+def generate_JWT(apiKey):
+    if (apiKey != API_KEY):
+        raise Exception('Invalid_API_KEY')
+    else:
+        EXPIRATION_TIMESTAMP = datetime.datetime.utcnow() + datetime.timedelta(hours=EXPIRATION_TIME_HOURS)
+        RANDOM_TOKEN =  generate_random_token()
+        token = jwt.encode({"random": RANDOM_TOKEN , "exp": EXPIRATION_TIMESTAMP}, SIGNATURE , algorithm=HASHING_ALG)
+        return token
 
 # authenticate Json Web Token
 def authenticate_JWT(token,signature):
