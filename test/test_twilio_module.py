@@ -13,6 +13,7 @@ class TestTwilioModule(unittest.TestCase):
         self.invalidKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
         self.expiredToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyYW5kb20iOiI5MmI0Y2ZhMjdmYjA0OTI5OWY2M2M1OTFmMjU1ZTEzYiIsImV4cCI6MTYxODMzMzUzMH0.eFsMG3cIgtSBmD7jPrhJPphI8BrAWGSlIAypFtAtEBg'
         self.body = "This is Designer Nail Salon confirming your appointment for 01/20/2021 at 6:00PM -- TESTING"
+        self.apiKey = os.getenv('API_KEY')
         self.reciever = os.getenv('TEST_RECIEVER')
     
     # Test the send confirmation function - passing in a invalid token
@@ -36,7 +37,7 @@ class TestTwilioModule(unittest.TestCase):
     # Test the send confirmation function - passing in a valid token
     # Should be able to call function without any exceptions
     def test_send_comfirmation_func_with_valid_token(self):
-        validToken = generate_JWT()
+        validToken = generate_JWT(self.apiKey)
         result = send_comfirmation_text_msg_to_reciever(validToken,self.reciever,self.body)
         self.assertEqual(result['to'], '+1{}'.format(self.reciever))
         self.assertEqual(result['body'],self.body)        

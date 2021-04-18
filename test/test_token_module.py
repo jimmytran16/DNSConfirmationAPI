@@ -8,6 +8,7 @@ from api.token.tokenizer import *
 class TestToken(unittest.TestCase):
     def setUp(self):
         self.SIGNATURE = os.getenv('SIGNATURE')
+        self.apiKey = os.getenv('API_KEY')
         self.INVALID_TOKENS = [
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.fwpMeJf36POk6yJV_adQssw5cSflKxwRJSMeKKF2QT4',
@@ -18,11 +19,11 @@ class TestToken(unittest.TestCase):
 
     # Test to see that the generate_JWT() function should return back a byte datatype of the token  
     def test_generate_jwt_func(self):
-        self.assertEqual(type(generate_JWT()), type(bytes()))
+        self.assertEqual(type(generate_JWT(self.apiKey)), type(bytes()))
     
     # Test the authenticate_JWT() function by passing in a valid token, should return true
     def test_authenticate_jwt_func(self):
-        token = generate_JWT()
+        token = generate_JWT(self.apiKey)
         result = authenticate_JWT(token, self.SIGNATURE)
         self.assertEqual(result,None)
 
