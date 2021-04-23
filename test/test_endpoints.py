@@ -21,6 +21,12 @@ class TestEndpoints(unittest.TestCase):
             'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6IjUxMDU0NjcxLTkzODItNDRiZi1hNGI3LWM0YWZjYTc3YWMzMSIsImlhdCI6MTYxODI4MTA1NiwiZXhwIjoxNjE4Mjg0NjU2fQ.NFwxUFJ58fDt0C7CRywfI7qCc_O2rFrylit151bD_Z0',
             'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNjE4MjgxMDU2LCJleHAiOjE2MTgyODQ2OTUsImp0aSI6IjJkMGVkNjRkLWRlODQtNDg4NC1iNDYzLWI4MTFiNzgyYTViNiJ9.4-VT3VO8dLnTpgn-6uqllCXaH-R7Nqdy-vzWFqhllRM',
         ]
+        self.NOT_ENOUGH_SEGMENT_TOKENS = [
+            '123',
+            'ejfowejfoiewjfioejwfiowejfoiwejiofjweoiew',
+            'CIBgbQbNqtJPJNQpD6AE94tkagFM6j0h',
+            '!'
+        ]
 
     def tearDown(self):
         pass
@@ -38,9 +44,11 @@ class TestEndpoints(unittest.TestCase):
 
 
 # +---------------------------------+
-# | TESTING /getToken endpoint      |
+# | TESTING /getToken endpoint      | 
 # +---------------------------------+
+# All cases are asserting the response data, response status code, and response headers
 
+    # test a success request call for endpoint passing in correct parameters
     def test_successful_generate_token_endpoint(self):
         url = self.getTokenEndpoint + '?apiKey={}'.format(self.apiKey)
         response = self.get_response(url)
@@ -51,7 +59,7 @@ class TestEndpoints(unittest.TestCase):
         self.assertEqual(True,response_data['success'])
         self.assertEqual('application/json',response.headers[0][1])
 
-    
+    # test a unsucessful request call for endpoint passing in an invalid API key
     def test_unsuccessful_generate_token_endpoint_wrong_api_key(self):
         invalid_api_key = '123321123321'
         url = self.getTokenEndpoint + '?apiKey={}'.format(invalid_api_key)
@@ -63,6 +71,7 @@ class TestEndpoints(unittest.TestCase):
         self.assertEqual(200,response.status_code)
         self.assertEqual('application/json',response.headers[0][1])
 
+    # test a unsuccessful request call for endpoint not passing in a required API key parameter
     def test_unsuccessful_generate_token_endpoint_no_api_key(self):
         url = self.getTokenEndpoint
         response = self.get_response(url)
@@ -79,6 +88,7 @@ class TestEndpoints(unittest.TestCase):
 # | TESTING /sendConfirmation endpoint |
 # +------------------------------------+
 
+    # test a successful request to the endpoint
     def test_successful_send_confirmation_endpoint(self):
        
         jwt = generate_JWT(self.apiKey).decode('utf-8')
@@ -87,38 +97,50 @@ class TestEndpoints(unittest.TestCase):
         response = self.get_response(url)
         response_data = self.parse_response_data(response.data)
         
-        print(response_data)
         self.assertEqual(True,response_data['success'])
         self.assertEqual(200,response.status_code)
         self.assertEqual('application/json',response.headers[0][1])
         self.assertIn("successfully confirmed",response_data['message'])
 
+    # test an unsuccessful request to the endpoint, passing in an invalid JWT
     def test_unsuccessful_send_confirmation_endpoint_wrong_jwt_token(self):
            
-        invalid_jwt_1 = self.INVALID_TOKENS[0]
-        invalid_jwt_2 = self.INVALID_TOKENS[1]
-        
-        query_parameters_1 = '?key={}&number={}&message=hi%20this%20is%20for%20testing%20message.%20'.format(invalid_jwt_1,self.testPhoneNumber)
-        query_parameters_2 = '?key={}&number={}&message=hi%20this%20is%20for%20testing%20message.%20'.format(invalid_jwt_2,self.testPhoneNumber)
-        
-        url_1 = self.sendConfirmationEndpoint + query_parameters_1
-        url_2 = self.sendConfirmationEndpoint + query_parameters_2
+        invalid_tokens = self.INVALID_TOKENS
+        query_parameter_string = '?key={}&number={}&message=hi%20this%20is%20for%20testing%20message.%20'
+        # loop through the invalid tokens and call the /sendConfirmation endpoint
+        # asserts success is false, response status is 200, response message
+        for token in invalid_tokens:
+            query_parameters = query_parameter_string.format(token,self.testPhoneNumber)
+            url = self.sendConfirmationEndpoint + query_parameters
+            response = self.get_response(url)
+            response_data = self.parse_response_data(response.data)
+            
+            self.assertFalse(response_data['success'])
+            self.assertIn("Signature verification failed",response_data['message'])
+            self.assertEqual('application/json',response.headers[0][1])
+            self.assertEqual(200,response.status_code)
 
-        response_1 = self.get_response(url_1)
-        response_2 = self.get_response(url_2)
+    # test an unsuccessful request to endpoint, passing in JWT tokens that are not of required length
+    def test_unsuccessful_send_confirmation_endpoint_not_enough_segments(self):
 
-        response_data_1 = self.parse_response_data(response_1.data)
-        response_data_2 = self.parse_response_data(response_2.data)
+        not_enough_segment_tokens = self.NOT_ENOUGH_SEGMENT_TOKENS
+        query_parameter_string = '?key={}&number={}&message=hi%20this%20is%20for%20testing%20message.%20'
+        # loop through the tokens that don't have enough segments and call the /sendConfirmation endpoint
+        # asserts success is false, response status is 200, response message
+        for token in not_enough_segment_tokens:
+            query_parameters = query_parameter_string.format(token,self.testPhoneNumber)
+            url = self.sendConfirmationEndpoint + query_parameters
+            response = self.get_response(url)
+            response_data = self.parse_response_data(response.data)
+
+            self.assertFalse(response_data['success'])
+            self.assertIn("Not enough segments",response_data['message'])
+            self.assertEqual('application/json',response.headers[0][1])
+            self.assertEqual(200,response.status_code)
+
+
 
         
-        self.assertFalse(response_data_1['success'])
-        self.assertIn("Signature verification failed",response_data_1['message'])
-        self.assertEqual('application/json',response_1.headers[0][1])
-        
-        self.assertFalse(response_data_2['success'])
-        self.assertIn("Signature verification failed",response_data_2['message'])
-        self.assertEqual('application/json',response_2.headers[0][1])
-
 
     
 
