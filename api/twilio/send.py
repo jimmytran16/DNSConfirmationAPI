@@ -1,6 +1,7 @@
 from twilio.rest import Client
 import os
 from api.token.tokenizer import authenticate_JWT
+from api.helpers.helpers import remove_non_numerical_char_from_phone_number
 
 #development imports
 from dotenv import load_dotenv
@@ -9,7 +10,7 @@ load_dotenv()
 # function to send out the confirmation text message
 def send_comfirmation_text_msg_to_reciever(key,reciever,body):
     signature = os.getenv('SIGNATURE')
-    
+    reciever = remove_non_numerical_char_from_phone_number(reciever)
     try:
         # validate the JWT
         authenticate_JWT(key,signature) 
