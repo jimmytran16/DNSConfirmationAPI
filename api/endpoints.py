@@ -15,11 +15,13 @@ class GenerateToken(Resource):
         try:
             # retrieve api token from the client
             apiKey = request.args['apiKey']
-            token = generate_JWT(apiKey).decode("utf-8") 
-            return jsonify({ 'success':True, 'accessToken': token })
+            token = generate_JWT(apiKey).decode("utf-8")
+            response = { 'success':True, 'accessToken': token } 
+            return jsonify(response)
         except Exception as e:
             print('generate exception ',e)
-            return jsonify({ 'success':False, 'accessToken': 'error_generating_token' + str(e).replace(' ','_') })
+            response = { 'success':False, 'accessToken': 'error_generating_token' + str(e).replace(' ','_') }
+            return jsonify(response)
 
 # Appointment Confirmation endpoint
 class AppointmentConfirmation(Resource):
@@ -29,14 +31,17 @@ class AppointmentConfirmation(Resource):
             args = request.args 
             # validate the args, make sure all required params are passed in from the request args
             if 'key' not in args or 'number' not in args or 'message' not in args:
-                return jsonify({ 'success':'false', 'message':'Missing params key, number, or message' })
+                response = { 'success':'false', 'message':'Missing params key, number, or message' }
+                return jsonify(response)
 
             # call the send_comfirmation_text_msg_to_reciever function and pass in the args
             message_sid = send_comfirmation_text_msg_to_reciever(args['key'],args['number'],args['message'])
-            return jsonify({ 'success': True, 'message':'successfully confirmed {}'.format(message_sid) })
+            response = { 'success': True, 'message':'successfully confirmed {}'.format(message_sid) }
+            return jsonify(response)
         
         except Exception as e: # handling error
-            return jsonify({ 'success': False, 'message':'unsuccessful comfirmed - {}'.format(e) })
+            response = { 'success': False, 'message':'unsuccessful comfirmed - {}'.format(e) }
+            return jsonify(response)
 
 api.add_resource(Main,'/')
 api.add_resource(GenerateToken,'/getToken')

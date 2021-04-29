@@ -11,7 +11,7 @@ class TestTwilioModule(unittest.TestCase):
     # set up initializations variables that will be used in test case functions
     def setUp(self):
         self.invalidKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-        self.expiredToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyYW5kb20iOiI5MmI0Y2ZhMjdmYjA0OTI5OWY2M2M1OTFmMjU1ZTEzYiIsImV4cCI6MTYxODMzMzUzMH0.eFsMG3cIgtSBmD7jPrhJPphI8BrAWGSlIAypFtAtEBg'
+        self.expiredToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyYW5kb20iOiI1Njk3OGRkZDU5NmY0M2M0OWU3NmYwNzkxNDg0YWJlNSIsImV4cCI6MTYxOTY2MTM0MX0.AxZL6y88wGZ2zXBks4wAnd689Q_lPAubsL6a40gS2aw'
         self.body = "This is Designer Nail Salon confirming your appointment for 01/20/2021 at 6:00PM -- TESTING"
         self.apiKey = os.getenv('API_KEY')
         self.reciever = os.getenv('TEST_RECIEVER')

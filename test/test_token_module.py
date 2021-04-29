@@ -15,7 +15,7 @@ class TestToken(unittest.TestCase):
             'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6IjUxMDU0NjcxLTkzODItNDRiZi1hNGI3LWM0YWZjYTc3YWMzMSIsImlhdCI6MTYxODI4MTA1NiwiZXhwIjoxNjE4Mjg0NjU2fQ.NFwxUFJ58fDt0C7CRywfI7qCc_O2rFrylit151bD_Z0',
             'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNjE4MjgxMDU2LCJleHAiOjE2MTgyODQ2OTUsImp0aSI6IjJkMGVkNjRkLWRlODQtNDg4NC1iNDYzLWI4MTFiNzgyYTViNiJ9.4-VT3VO8dLnTpgn-6uqllCXaH-R7Nqdy-vzWFqhllRM',
         ]
-        self.expiredToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyYW5kb20iOiI5MmI0Y2ZhMjdmYjA0OTI5OWY2M2M1OTFmMjU1ZTEzYiIsImV4cCI6MTYxODMzMzUzMH0.eFsMG3cIgtSBmD7jPrhJPphI8BrAWGSlIAypFtAtEBg'
+        self.expiredToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyYW5kb20iOiI1Njk3OGRkZDU5NmY0M2M0OWU3NmYwNzkxNDg0YWJlNSIsImV4cCI6MTYxOTY2MTM0MX0.AxZL6y88wGZ2zXBks4wAnd689Q_lPAubsL6a40gS2aw'
 
     # Test to see that the generate_JWT() function should return back a byte datatype of the token  
     def test_generate_jwt_func(self):

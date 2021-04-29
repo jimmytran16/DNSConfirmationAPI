@@ -33,3 +33,7 @@ def authenticate_JWT(token,signature):
         jwt.decode(token, signature , algorithms=[HASHING_ALG]) 
     except Exception as e:
         raise Exception(str(e))
+
+
+# if __name__ == '__main__':
+    # print(authenticate_JWT('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyYW5kb20iOiI1Njk3OGRkZDU5NmY0M2M0OWU3NmYwNzkxNDg0YWJlNSIsImV4cCI6MTYxOTY2MTM0MX0.AxZL6y88wGZ2zXBks4wAnd689Q_lPAubsL6a40gS2aw',SIGNATURE))
