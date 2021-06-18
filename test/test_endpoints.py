@@ -3,7 +3,7 @@ from api import app
 from dotenv import load_dotenv
 load_dotenv()
 
-from api.token.tokenizer import generate_JWT
+from api.services.token.token_service import TokenizerService
 
 class TestEndpoints(unittest.TestCase):
 
@@ -27,6 +27,7 @@ class TestEndpoints(unittest.TestCase):
             'CIBgbQbNqtJPJNQpD6AE94tkagFM6j0h',
             '!'
         ]
+        self._tokenizer_serivce = TokenizerService()
 
     def tearDown(self):
         pass
@@ -91,7 +92,7 @@ class TestEndpoints(unittest.TestCase):
     # test a successful request to the endpoint
     def test_successful_send_confirmation_endpoint(self):
        
-        jwt = generate_JWT(self.apiKey).decode('utf-8')
+        jwt = self._tokenizer_serivce.generate_JWT(self.apiKey).decode('utf-8')
         query_parameters = '?key={}&number={}&message=hi%20this%20is%20for%20testing%20message.%20'.format(jwt,self.testPhoneNumber)
         url = self.sendConfirmationEndpoint + query_parameters
         response = self.get_response(url)

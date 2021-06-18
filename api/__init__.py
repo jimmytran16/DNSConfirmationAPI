@@ -7,5 +7,5 @@ app = Flask(__name__)
 api = Api(app)
 
 # import all the endpoints 
-from .endpoints import *
+from .controllers.endpoints import *
 

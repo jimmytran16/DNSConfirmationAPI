@@ -1,6 +1,6 @@
 import unittest
-from api.twilio.send import send_comfirmation_text_msg_to_reciever
-from api.token.tokenizer import generate_JWT
+from api.services.twilio.twilio_service import TwilioService
+from api.services.token.token_service import TokenizerService
 
 import os
 from dotenv import load_dotenv
@@ -15,12 +15,14 @@ class TestTwilioModule(unittest.TestCase):
         self.body = "This is Designer Nail Salon confirming your appointment for 01/20/2021 at 6:00PM -- TESTING"
         self.apiKey = os.getenv('API_KEY')
         self.reciever = os.getenv('TEST_RECIEVER')
+        self._twilio_service = TwilioService()
+        self._tokenizer_service = TokenizerService()
     
     # Test the send confirmation function - passing in a invalid token
     # There should be an Exception with the message saying 'Signature verification failed'
     def test_send_comfirmation_func_with_invalid_token(self):
         try:
-            data = send_comfirmation_text_msg_to_reciever(self.invalidKey,self.reciever,self.body)
+            data = self._twilio_service.send_comfirmation_text_msg_to_reciever(self.invalidKey,self.reciever,self.body)
             self.assertEqual(data['to'], self.reciever)
             self.assertEqual(data['body'],self.body)
         except Exception as e:
@@ -30,15 +32,15 @@ class TestTwilioModule(unittest.TestCase):
     # There should be an Exception with the message saying 'Signature has expired'
     def test_send_comfirmation_func_with_expired_token(self):
         try:
-            send_comfirmation_text_msg_to_reciever(self.expiredToken,self.reciever,self.body)
+            self._twilio_service.send_comfirmation_text_msg_to_reciever(self.expiredToken,self.reciever,self.body)
         except Exception as e:
             self.assertEqual(str(e),'Signature has expired')
     
     # Test the send confirmation function - passing in a valid token
     # Should be able to call function without any exceptions
     def test_send_comfirmation_func_with_valid_token(self):
-        validToken = generate_JWT(self.apiKey)
-        result = send_comfirmation_text_msg_to_reciever(validToken,self.reciever,self.body)
+        validToken = self._tokenizer_service.generate_JWT(self.apiKey)
+        result = self._twilio_service.send_comfirmation_text_msg_to_reciever(validToken,self.reciever,self.body)
         self.assertEqual(result['to'], '+1{}'.format(self.reciever))
         self.assertEqual(result['body'],self.body)        
         self.assertEqual(result['from'],'+1{}'.format(os.getenv('SENDER_NUMBER')))

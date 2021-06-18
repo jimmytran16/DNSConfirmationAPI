@@ -1,8 +1,8 @@
 from flask_restful import Resource, request
 from flask import jsonify
-from . import app, api
-from .twilio.send import send_comfirmation_text_msg_to_reciever
-from .token.tokenizer import generate_JWT
+from api import app, api
+from api.services.twilio.twilio_service import TwilioService
+from api.services.token.token_service import TokenizerService
 
 # Main endpoint
 class Main(Resource):
@@ -11,11 +11,14 @@ class Main(Resource):
 
 # Token Generator endpoint - generates JWT to the Designer Web App, to authorize use of AppointmentConfirmation 
 class GenerateToken(Resource):
+    def __init__(self):
+        self._tokenizer_service = TokenizerService()
+
     def get(self):
         try:
             # retrieve api token from the client
             apiKey = request.args['apiKey']
-            token = generate_JWT(apiKey).decode("utf-8")
+            token = self._tokenizer_service.generate_JWT(apiKey).decode("utf-8")
             response = { 'success':True, 'accessToken': token } 
             return jsonify(response)
         except Exception as e:
@@ -25,6 +28,9 @@ class GenerateToken(Resource):
 
 # Appointment Confirmation endpoint
 class AppointmentConfirmation(Resource):
+    def __init__(self):
+        self._twilio_service = TwilioService()
+
     def get(self):
         try:
             # retrieving args from the query url string from the request object
@@ -35,7 +41,7 @@ class AppointmentConfirmation(Resource):
                 return jsonify(response)
 
             # call the send_comfirmation_text_msg_to_reciever function and pass in the args
-            message_sid = send_comfirmation_text_msg_to_reciever(args['key'],args['number'],args['message'])
+            message_sid = self._twilio_service.send_comfirmation_text_msg_to_reciever(args['key'],args['number'],args['message'])
             response = { 'success': True, 'message':'successfully confirmed {}'.format(message_sid) }
             return jsonify(response)
         

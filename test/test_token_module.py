@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from api.token.tokenizer import *
+from api.services.token.token_service import TokenizerService
 
 class TestToken(unittest.TestCase):
     def setUp(self):
@@ -16,15 +16,16 @@ class TestToken(unittest.TestCase):
             'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNjE4MjgxMDU2LCJleHAiOjE2MTgyODQ2OTUsImp0aSI6IjJkMGVkNjRkLWRlODQtNDg4NC1iNDYzLWI4MTFiNzgyYTViNiJ9.4-VT3VO8dLnTpgn-6uqllCXaH-R7Nqdy-vzWFqhllRM',
         ]
         self.expiredToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyYW5kb20iOiI1Njk3OGRkZDU5NmY0M2M0OWU3NmYwNzkxNDg0YWJlNSIsImV4cCI6MTYxOTY2MTM0MX0.AxZL6y88wGZ2zXBks4wAnd689Q_lPAubsL6a40gS2aw'
+        self._tokenizer_service = TokenizerService()
 
     # Test to see that the generate_JWT() function should return back a byte datatype of the token  
     def test_generate_jwt_func(self):
-        self.assertEqual(type(generate_JWT(self.apiKey)), type(bytes()))
+        self.assertEqual(type(self._tokenizer_service.generate_JWT(self.apiKey)), type(bytes()))
     
     # Test the authenticate_JWT() function by passing in a valid token, should return true
     def test_authenticate_jwt_func(self):
-        token = generate_JWT(self.apiKey)
-        result = authenticate_JWT(token, self.SIGNATURE)
+        token = self._tokenizer_service.generate_JWT(self.apiKey)
+        result = self._tokenizer_service.authenticate_JWT(token, self.SIGNATURE)
         self.assertEqual(result,None)
 
 
@@ -32,31 +33,31 @@ class TestToken(unittest.TestCase):
     # All function calls should give expcetion and return message "Signature verification failed"
     def test_authenticate_with_invalid_tokens_0(self):
         try:
-            authenticate_JWT(self.INVALID_TOKENS[0], self.SIGNATURE)
+            self._tokenizer_service.authenticate_JWT(self.INVALID_TOKENS[0], self.SIGNATURE)
         except Exception as e:
             self.assertEqual(str(e),'Signature verification failed')
     
     def test_authenticate_with_invalid_tokens_1(self):
         try:
-            authenticate_JWT(self.INVALID_TOKENS[1], self.SIGNATURE)
+            self._tokenizer_service.authenticate_JWT(self.INVALID_TOKENS[1], self.SIGNATURE)
         except Exception as e:
             self.assertEqual(str(e),'Signature verification failed')
     
     def test_authenticate_with_invalid_tokens_2(self):
         try:
-            authenticate_JWT(self.INVALID_TOKENS[2], self.SIGNATURE)
+            self._tokenizer_service.authenticate_JWT(self.INVALID_TOKENS[2], self.SIGNATURE)
         except Exception as e:
             self.assertEqual(str(e),'Signature verification failed')
     
     def test_authenticate_with_invalid_tokens_3(self):
         try:
-            authenticate_JWT(self.INVALID_TOKENS[3], self.SIGNATURE)
+            self._tokenizer_service.authenticate_JWT(self.INVALID_TOKENS[3], self.SIGNATURE)
         except Exception as e:
             self.assertEqual(str(e),'Signature verification failed')
     
     def test_authenticate_with_expired_token(self):
         try:
-            authenticate_JWT(self.expiredToken, self.SIGNATURE)
+            self._tokenizer_service.authenticate_JWT(self.expiredToken, self.SIGNATURE)
         except Exception as e:
             self.assertEqual(str(e),'Signature has expired')
             
