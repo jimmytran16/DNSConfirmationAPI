@@ -11,6 +11,7 @@ env/
 .idea/
 docs/_build/
 .vscode
+TODO.txt
 
 # Coverage reports
 htmlcov/
