@@ -7,7 +7,7 @@ from api.services.token.token_service import TokenizerService
 # Main endpoint
 class Main(Resource):
     def get(self):
-        return jsonify({ 'message': 'Welcome to the Designer Nail Salon Messaging API' })
+        return jsonify({ 'message': 'Welcome to the Designer Nail Salon Confirmation API' })
 
 # Token Generator endpoint - generates JWT to the Designer Web App, to authorize use of AppointmentConfirmation 
 class GenerateToken(Resource):
@@ -49,7 +49,26 @@ class AppointmentConfirmation(Resource):
             response = { 'success': False, 'message':'unsuccessful comfirmed - {}'.format(e) }
             return jsonify(response)
 
+# Revieces appointment information from the webapp and sends appointment to admin's phone
+class AppointmentInfo(Resource):
+    def __init__(self):
+        self._twilio_service = TwilioService()
+    
+    def post(self):
+        try:
+            json_data = request.get_json()
+            print('hey', json_data)
+            message_info = self._twilio_service.send_appointment_info_to_admin(json_data)
+            response = { 'success': True, 'message': 'Sucessfully sent to admin - {}'.format(message_info) }
+            return jsonify(response)
+        except Exception as e:
+            response = { 'success': False, 'message':'unsuccessful send to admin - {}'.format(e) }
+            return jsonify(response)
+
+
+
 api.add_resource(Main,'/')
 api.add_resource(GenerateToken,'/getToken')
 api.add_resource(AppointmentConfirmation, '/sendConfirmation')
+api.add_resource(AppointmentInfo, '/sendAppointmentInfo')
 
