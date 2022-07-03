@@ -20,7 +20,14 @@ class TwilioService:
         self.__tokenizer_service = TokenizerService()
     
     # function to send the appointment information to the admin's phone
-    def send_appointment_info_to_admin(self, body):
+    def send_appointment_info_to_admin(self, messageInfo):
+        print(messageInfo)
+        # If the body does not contain anything then we want don't want to send out the message
+        if not messageInfo:
+            return
+
+        body = self.__create_body(messageInfo)
+
         try:
             client = Client(self.account_sid, self.auth_token)
 
@@ -66,6 +73,11 @@ class TwilioService:
             return { 'sid':message.sid, 'from':trail_number, 'to':reciever_number, 'body':body }   
         except Exception as e:
             raise Exception(str(e))
+    
+    def __create_body(self, messageInfo):
+        return '''
+            REQUEST DATE: {} \n\nName: {} \n\nPhone Numer: {} \n\nEmail: {} \n\nTime: {} \n\nMessage: {} \n\nConfirmation Link: {}
+        '''.format(messageInfo['date'],messageInfo['name'],messageInfo['phone'],messageInfo['email'],messageInfo['appointment'],messageInfo['message'],messageInfo['confirmationUrl'])
     
 
 if __name__ == '__main__':

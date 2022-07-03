@@ -57,8 +57,8 @@ class AppointmentInfo(Resource):
     def post(self):
         try:
             json_data = request.get_json()
-            print(json_data)
-            message_info = self._twilio_service.send_appointment_info_to_admin(json_data['message'])
+            print('hey', json_data)
+            message_info = self._twilio_service.send_appointment_info_to_admin(json_data)
             response = { 'success': True, 'message': 'Sucessfully sent to admin - {}'.format(message_info) }
             return jsonify(response)
         except Exception as e:
